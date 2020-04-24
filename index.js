@@ -1,28 +1,52 @@
 addEventListener('fetch', event => {
-  event.respondWith(handleRequest(event.request))
+	event.respondWith(handleRequest(event.request))
 })
 
 async function handleRequest(request) {
-	const response = await fetch(new URL('https://cfw-takehome.developers.workers.dev/api/variants'));
-	let data = await response.json();
+	const oldResponse = await fetch(new URL('https://cfw-takehome.developers.workers.dev/api/variants'));
+	let data = await oldResponse.json();
 	var urls = data["variants"];
 
-	if(getRandomInt() == 0) {
-		
-	}
+	var num = getRandomInt();
+	var oldResponseURL;
 
+	oldResponseURL = await fetch(new URL(urls[num]));
 
-	/*
-	var1 = data["variants"][0];
-	var2 = data["variants"][1];
-	console.log(var1);
-	console.log(var2);
-	*/ 
-	return new Response(var1+"\n"+var2, {
-		headers: { 'content-type': 'text/plain' },
-	});
+	const newResponse = new HTMLRewriter()
+	//.on('p#description', new ElementHandler()).transform(oldResponseURL)
+	//.on('h1#title', new ElementHandler()).transform(oldResponseURL)
+	.on('*', new ElementHandler()).transform(oldResponseURL)
+
+	return newResponse;
 }
 
 function getRandomInt() {
-  return Math.floor(Math.random()*(2));
+	return Math.floor(Math.random() * (2));
+}
+
+class ElementHandler {
+	element(element) {
+    //console.log(element.tagName)
+    //console.log(element.getAttribute('id'))
+	}
+
+	comments(element) {
+		console.log(`Some comment`);
+	}
+
+	text(element) {
+		const attribute = element.text
+
+		console.log(element)
+
+		if (attribute.match("1"))
+			element.replace("Hello World Variant 1");
+		else if (attribute.match("2"))
+			element.replace("Hello World Variant 2");
+		else if (attribute.match("This is variant one of the take home project!"))
+			element.replace("Now belongs to Oliver");
+		else if (attribute.match("This is variant two of the take home project!"))
+			element.replace("Now belongs to Oliver 2");
+		return;
+	}
 }

@@ -1,3 +1,5 @@
+// Published version can be found at https://fullstack_internship.owang00.workers.dev/
+
 addEventListener('fetch', event => {
 	event.respondWith(handleRequest(event.request))
 })
